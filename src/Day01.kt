@@ -13,28 +13,21 @@ fun main() {
         list1.sort()
         list2.sort()
 
-        var sum = 0
-        for (i in list1.indices) {
-            sum += abs (list1[i] - list2[i])
-        }
-        return sum
+        return list1.indices.sumOf { abs (list1[it] - list2[it]) }
     }
 
     fun part2(input: List<String>): Long {
-        val list1 = mutableListOf<Int>()
-        val list2Counts = HashMap<Int, Int>()
+        val list1 = mutableListOf<Long>()
+        val list2Counts = HashMap<Long, Long>()
         for (line in input) {
-            val parts = line.split(Regex("\\s+"), 2).map { it.trim().toInt() }
+            val parts = line.split(Regex("\\s+"), 2).map { it.trim().toLong() }
             list1.add(parts[0])
             list2Counts[parts[1]] = list2Counts.getOrDefault(parts[1], 0) + 1
         }
 
-        var sum = 0L
-        for (num in list1) {
-            sum += num * list2Counts.getOrDefault(num, 0)
+        return list1.sumOf { num ->
+            num * list2Counts.getOrDefault(num, 0)
         }
-
-        return sum
     }
 
     // Or read a large test input from the `src/Day01_test.txt` file:
