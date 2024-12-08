@@ -23,6 +23,7 @@ private fun parseInput(input: List<String>): Pair<List<Rule>, List<Update>> {
     return Pair(rules, updates)
 }
 
+// returns the middle page number of the Update, or 0 if invalid
 private fun checkUpdateIsValid(rules: List<Rule>, update: Update): Int {
     for (rule in rules) {
         val ia = update.pages.indexOf(rule.a)
@@ -36,6 +37,7 @@ private fun checkUpdateIsValid(rules: List<Rule>, update: Update): Int {
     return update.middlePage()
 }
 
+// returns the fixed Update
 private fun fixUpdate(rules: List<Rule>, update: Update): Update {
     val pages = ArrayList(update.pages) // take a copy
     while (checkUpdateIsValid(rules, Update(pages)) == 0) {
@@ -65,8 +67,9 @@ fun main() {
 
     fun part2(input: List<String>): Int {
         val (rules, updates) = parseInput(input)
-        val invalidUpdates = updates.filter { checkUpdateIsValid(rules, it) == 0 }
-        return invalidUpdates.map { fixUpdate(rules, it) }.sumOf { it.middlePage() }
+        return updates.filter { checkUpdateIsValid(rules, it) == 0 }
+            .map { fixUpdate(rules, it) }
+            .sumOf { it.middlePage() }
     }
 
     // Or read a large test input from the `src/Day01_test.txt` file:
