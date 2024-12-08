@@ -43,15 +43,15 @@ private fun checkForWord(start: Point, grid: List<String>): Int {
 private fun checkForX(start: Point, grid: List<String>): Boolean {
     // must match 2, or it isn't a cross. Can't possibly match more than 2.
     var found = 0
-    outer@ for (dir in DIAGONALS) {
+    for (dir in DIAGONALS) {
         val forward = start.moveBy(dir)
         if (forward.outOfBounds(grid) || grid[forward.y][forward.x] != 'S') {
-            continue@outer
+            continue
         }
 
         val backward = start.moveBackBy(dir)
         if (backward.outOfBounds(grid) || grid[backward.y][backward.x] != 'M') {
-            continue@outer
+            continue
         }
         found ++
     }
