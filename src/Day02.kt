@@ -28,6 +28,7 @@ private fun reportIsSafe(levels: List<Int>) : Boolean {
     return true
 }
 
+
 fun main() {
     val day = "02"
 
@@ -36,24 +37,22 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        var safeTotal = 0
-        for (report in input) {
+        return input.fold(0) { acc, report ->
             val levels = levelsFromReport(report)
             if (reportIsSafe(levels)) {
-                safeTotal ++
+                acc + 1
             } else {
                 // remove one element at a time and test again
-                inner@ for (i in levels.indices) {
-                    val dampenedReport = ArrayList(levels).apply { removeAt(i) }
-                    if (reportIsSafe(dampenedReport)) {
-                        safeTotal++
-                        break@inner
-                    }
+                if (levels.indices.any {
+                        val dampenedLevels = ArrayList(levels).apply<ArrayList<Int>> { removeAt(it) }
+                        reportIsSafe(dampenedLevels)
+                    }) {
+                    acc + 1 // found at least one safe variant
+                } else {
+                    acc // no safe variants found
                 }
             }
         }
-
-        return safeTotal
     }
 
     // Or read a large test input from the `src/Day01_test.txt` file:
