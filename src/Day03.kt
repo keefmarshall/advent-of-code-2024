@@ -25,7 +25,6 @@ fun main() {
         val expressions = mulPattern
             .findAll(input.joinToString(" "))
             .map { it.value }
-            .toList()
 
         var doing = true
         var result = 0L
