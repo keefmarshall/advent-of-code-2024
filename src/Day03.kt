@@ -20,8 +20,26 @@ fun main() {
             .sum()
     }
 
-    fun part2(input: List<String>): Int {
-        return input.size
+    fun part2(input: List<String>): Long {
+        val mulPattern = Regex("""(mul\(\d+,\d+\))|(don't\(\))|(do\(\))""")
+        val expressions = mulPattern
+            .findAll(input.joinToString(" "))
+            .map { it.value }
+            .toList()
+
+        var doing = true
+        var result = 0L
+        expressions.forEach { expression ->
+            if (expression.startsWith("mul") && doing) {
+                result += evalMulExpression(expression)
+            } else if (expression.startsWith("don't")) {
+                doing = false
+            } else if (expression.startsWith("do(")) {
+                doing = true
+            } // else ignore
+        }
+
+        return result
     }
 
     // Or read a large test input from the `src/Day01_test.txt` file:
@@ -32,7 +50,8 @@ fun main() {
     val input = readInput("Day${day}")
     part1(input).println()
 
-
-    check(part2(testInput) == 31)
+    // this one has different test input for part 2
+    val testInput2 = readInput("Day${day}_test2")
+    check(part2(testInput2) == 48L)
     part2(input).println()
 }
