@@ -19,3 +19,11 @@ fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteA
  * The cleaner shorthand for printing output.
  */
 fun Any?.println() = println(this)
+
+
+/** UTIL CLASSES BELOW HERE **/
+data class Point(val x: Int, val y: Int) {
+    fun moveBy(p: Point) = Point(x + p.x, y + p.y)
+    fun moveBackBy(p: Point) = Point(x - p.x, y - p.y)
+    fun outOfBounds(grid: List<String>) = x < 0 || x >= grid[0].length || y < 0 || y >= grid.size
+}

@@ -1,5 +1,5 @@
-data class Rule(val a: Int, val b: Int)
-data class Update(val pages: List<Int>) {
+private data class Rule(val a: Int, val b: Int)
+private data class Update(val pages: List<Int>) {
     fun middlePage() = pages[pages.size / 2]
 }
 

@@ -1,11 +1,5 @@
-data class Point(val x: Int, val y: Int) {
-    fun moveBy(p: Point) = Point(x + p.x, y + p.y)
-    fun moveBackBy(p: Point) = Point(x - p.x, y - p.y)
-    fun outOfBounds(grid: List<String>) = x < 0 || x >= grid[0].length || y < 0 || y >= grid.size
-}
-
-val WORD = "XMAS"
-val DIRECTIONS = arrayOf(
+private val WORD = "XMAS"
+private val DIRECTIONS = arrayOf(
     Point(1, 0),
     Point(1, 1),
     Point(0, 1),
@@ -16,7 +10,7 @@ val DIRECTIONS = arrayOf(
     Point(1, -1)
 )
 
-val DIAGONALS = arrayOf(
+private val DIAGONALS = arrayOf(
     Point(1, 1),
     Point(-1, 1),
     Point(-1, -1),
