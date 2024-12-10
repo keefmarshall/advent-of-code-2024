@@ -1,9 +1,9 @@
 
-private enum class Direction(val move: Point) {
-    UP(Point(0, -1)),
-    RIGHT(Point(1, 0)),
-    DOWN(Point(0, 1)),
-    LEFT(Point(-1, 0))
+private enum class Direction(val move: PointVector) {
+    UP(PointVector(0, -1)),
+    RIGHT(PointVector(1, 0)),
+    DOWN(PointVector(0, 1)),
+    LEFT(PointVector(-1, 0))
 }
 
 private fun turnRight(dir: Direction): Direction =

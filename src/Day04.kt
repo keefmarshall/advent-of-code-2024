@@ -1,20 +1,20 @@
 private val WORD = "XMAS"
 private val DIRECTIONS = arrayOf(
-    Point(1, 0),
-    Point(1, 1),
-    Point(0, 1),
-    Point(-1, 1),
-    Point(-1, 0),
-    Point(-1, -1),
-    Point(0, -1),
-    Point(1, -1)
+    PointVector(1, 0),
+    PointVector(1, 1),
+    PointVector(0, 1),
+    PointVector(-1, 1),
+    PointVector(-1, 0),
+    PointVector(-1, -1),
+    PointVector(0, -1),
+    PointVector(1, -1)
 )
 
 private val DIAGONALS = arrayOf(
-    Point(1, 1),
-    Point(-1, 1),
-    Point(-1, -1),
-    Point(1, -1)
+    PointVector(1, 1),
+    PointVector(-1, 1),
+    PointVector(-1, -1),
+    PointVector(1, -1)
 )
 
 private fun checkForWord(start: Point, grid: List<String>): Int {

@@ -1,9 +1,9 @@
 
 private val directions = listOf(
-    Point(0, -1),
-    Point(1, 0),
-    Point(0, 1),
-    Point(-1, 0)
+    PointVector(0, -1),
+    PointVector(1, 0),
+    PointVector(0, 1),
+    PointVector(-1, 0)
 )
 
 
