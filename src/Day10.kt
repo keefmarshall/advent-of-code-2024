@@ -26,18 +26,11 @@ private fun findTrails(grid: List<String>, start: Point): List<Point> {
         return listOf(start)
     }
 
-    val validNextSteps = directions
+    return directions
         .map { start.moveBy(it) }
         .filterNot { it.outOfBounds(grid) }
         .filter { grid.at(it) == grid.at(start) + 1 }
-
-    return if (validNextSteps.isNotEmpty()) {
-        validNextSteps.flatMap {
-            findTrails(grid, it)
-        }
-    } else {
-        emptyList()
-    }
+        .flatMap { findTrails(grid, it) }
 }
 
 fun main() {
