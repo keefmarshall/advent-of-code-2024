@@ -21,31 +21,24 @@ private fun findTrailheads(grid: List<String>): List<Point> {
 }
 
 // returns set of summits visited
-private fun findTrails(grid: List<String>, start: Point, state: State): List<Point> {
+private fun findTrails(grid: List<String>, start: Point, summits: List<Point>): List<Point> {
     if (grid.at(start) == '9') {
-        return state.summits + start
+        return summits + start
     }
 
     val validNextSteps = directions
         .map { start.moveBy(it) }
         .filterNot { it.outOfBounds(grid) }
-        .filterNot { it in state.visited }
         .filter { grid.at(it) == grid.at(start) + 1 }
 
     return if (validNextSteps.isNotEmpty()) {
         validNextSteps.flatMap {
-            findTrails(grid, it, State(state.visited + it, state.summits))
+            findTrails(grid, it, summits)
         }
     } else {
-        state.summits
+        summits
     }
 }
-
-private class State(
-    val visited: Set<Point> = setOf(),
-    val summits: List<Point> = listOf()
-) {}
-
 
 fun main() {
     val day = "10"
@@ -53,7 +46,7 @@ fun main() {
     fun part1(input: List<String>): Int {
         val trailheads = findTrailheads(input)
         val result = trailheads.sumOf { trailhead ->
-            findTrails(input, trailhead, State(visited = setOf(trailhead))).toSet().size
+            findTrails(input, trailhead, listOf()).toSet().size
         }
         return result
     }
@@ -61,7 +54,7 @@ fun main() {
     fun part2(input: List<String>): Int {
         val trailheads = findTrailheads(input)
         val result = trailheads.sumOf { trailhead ->
-            findTrails(input, trailhead, State(visited = setOf(trailhead))).size
+            findTrails(input, trailhead, listOf()).size
         }
         return result
     }
