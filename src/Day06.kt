@@ -25,8 +25,6 @@ private fun findStartPos(grid: List<String>): Point {
     throw Exception("Can't find start position!")
 }
 
-private fun List<String>.at(p: Point) = this[p.y][p.x]
-
 fun main() {
     val day = "06"
 

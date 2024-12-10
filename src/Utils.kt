@@ -27,3 +27,5 @@ data class Point(val x: Int, val y: Int) {
     fun moveBackBy(p: Point) = Point(x - p.x, y - p.y)
     fun outOfBounds(grid: List<String>) = x < 0 || x >= grid[0].length || y < 0 || y >= grid.size
 }
+
+internal fun List<String>.at(p: Point) = this[p.y][p.x]
