@@ -21,9 +21,9 @@ private fun findTrailheads(grid: List<String>): List<Point> {
 }
 
 // returns set of summits visited
-private fun findTrails(grid: List<String>, start: Point, summits: List<Point>): List<Point> {
+private fun findTrails(grid: List<String>, start: Point): List<Point> {
     if (grid.at(start) == '9') {
-        return summits + start
+        return listOf(start)
     }
 
     val validNextSteps = directions
@@ -33,10 +33,10 @@ private fun findTrails(grid: List<String>, start: Point, summits: List<Point>): 
 
     return if (validNextSteps.isNotEmpty()) {
         validNextSteps.flatMap {
-            findTrails(grid, it, summits)
+            findTrails(grid, it)
         }
     } else {
-        summits
+        emptyList()
     }
 }
 
@@ -46,7 +46,7 @@ fun main() {
     fun part1(input: List<String>): Int {
         val trailheads = findTrailheads(input)
         val result = trailheads.sumOf { trailhead ->
-            findTrails(input, trailhead, listOf()).toSet().size
+            findTrails(input, trailhead).toSet().size
         }
         return result
     }
@@ -54,7 +54,7 @@ fun main() {
     fun part2(input: List<String>): Int {
         val trailheads = findTrailheads(input)
         val result = trailheads.sumOf { trailhead ->
-            findTrails(input, trailhead, listOf()).size
+            findTrails(input, trailhead).size
         }
         return result
     }
