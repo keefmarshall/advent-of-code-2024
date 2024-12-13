@@ -93,9 +93,9 @@ fun main() {
             c.edges.sorted().sumOf { edge ->
                 seen.add(edge)
                 if ((seen.any { it.contiguousWith(edge) })) {
-                    0L
+                    0L // we've already counted this fence
                 } else {
-                    1L
+                    1L // this is a new fence
                 }
             } * c.members.size
         }
