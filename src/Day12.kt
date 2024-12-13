@@ -91,9 +91,9 @@ fun main() {
         val result = clusters.sumOf { c ->
             val seen = mutableSetOf<Edge>()
             c.edges.sorted().sumOf { edge ->
-                val isExistingEdge = (seen.any { it.contiguousWith(edge) })
+                val isExistingFence = (seen.any { it.contiguousWith(edge) })
                 seen.add(edge)
-                if (isExistingEdge) {
+                if (isExistingFence) {
                     0L
                 } else {
                     1L
