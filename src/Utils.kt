@@ -29,6 +29,7 @@ data class Point(val x: Int, val y: Int) {
     fun moveBy(v: PointVector) = Point(x + v.x, y + v.y)
     fun moveBackBy(v: PointVector) = Point(x - v.x, y - v.y)
     fun outOfBounds(grid: List<String>) = x < 0 || x >= grid[0].length || y < 0 || y >= grid.size
+    fun outOfBounds(width: Int, height: Int) = x < 0 || x >= width || y < 0 || y >= height
 }
 
 /** very similar to a Point but represents the vector between two points e.g. (-1, 0)
