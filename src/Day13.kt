@@ -1,3 +1,4 @@
+import kotlin.math.round
 
 private data class Machine(
     val buttonA: PointVector,
@@ -25,7 +26,7 @@ private fun parseInput(grid: List<String>): List<Machine> {
     }
 
     val machines = mutableListOf<Machine>()
-    for (m in 0 until grid.size step 4) {
+    for (m in grid.indices step 4) {
         val buttonA = parseButton(grid[m])
         val buttonB = parseButton(grid[m + 1])
         val prize = parsePrize(grid[m + 2])
@@ -36,25 +37,69 @@ private fun parseInput(grid: List<String>): List<Machine> {
     return machines
 }
 
-const val MAX_COST = 1000 // higher than can be reached
-
 private fun cheapestPrize(machine: Machine): Int {
-    var cost = MAX_COST
-    repeat(100 ) { a ->
-        repeat(100) { b ->
+    repeat(100 ) { b ->
+        repeat(100) { a ->
             val pos = Point(
                 machine.buttonA.x * a + machine.buttonB.x * b,
-                machine.buttonA.y * a +  machine.buttonB.y * b
+                machine.buttonA.y * a + machine.buttonB.y * b
             )
             if (pos == machine.prize) {
-                cost = minOf(cost, 3 * a + b )
+                return 3 * a + b
             }
         }
     }
 
-    return if (cost == MAX_COST) 0 else cost
+    return 0
 }
 
+private fun cheapestPrice2(machine: Machine, extra: Long = 0): Long {
+
+    val adjustedPrizeX = machine.prize.x + extra
+    val adjustedPrizeY = machine.prize.y + extra
+
+    // This is a geometry thing - intersection of two straight lines.
+    // Line A is y = ax where a = buttonA.y / buttonA.x - there's no offset as it passes through (0,0)
+    // Line B needs a linear offset to pass through the target point so:
+    // y = bx + d where b = buttonB.y / buttonB.x and d is calculated:
+    //  d = prize.y - (b * prize.x)
+
+    val a = machine.buttonA.y.toDouble() / machine.buttonA.x.toDouble()
+    val b = machine.buttonB.y.toDouble() / machine.buttonB.x.toDouble()
+    val d = adjustedPrizeY.toDouble() - (b * adjustedPrizeX.toDouble())
+
+    // for the intersection see: https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection#Given_two_line_equations
+    // noting that 'c' is 0 in our case
+    // x = ((d - c) / (a - b))
+    // NB if a == b the lines are parallel so the lines can never meet
+    // [technically there's an edge case here if one button can reach the prize by itself with
+    // zero presses of the other.. even if they're parallel .. but doesn't happen with my input]
+    if (a - b == 0.0) {
+        return 0
+    }
+
+    val intersectX = round(d / (a - b)).toLong()
+    val intersectY = round((b * intersectX) + d).toLong()
+
+    // If the intersection is not between (0,0) and adjustedPrize then it can't be done:
+    if (intersectX < 0 || intersectX > adjustedPrizeX || intersectY < 0 || intersectY > adjustedPrizeY) {
+        return 0
+    }
+
+    // OK now we have to figure out how many A moves and how many B moves to calculate the cost
+    // Also we've been working in floats but the machine works in integers so let's double check
+    val xdeltaA = intersectX
+    val xdeltaB = adjustedPrizeX - intersectX
+    val ydeltaA = intersectY
+    val ydeltaB = adjustedPrizeY - intersectY
+    if (xdeltaA % machine.buttonA.x != 0L || xdeltaB % machine.buttonB.x != 0L ||
+        ydeltaA % machine.buttonA.y != 0L || ydeltaB % machine.buttonB.y != 0L) {
+        // it's not a whole number of steps, so can't be done
+        return 0
+    }
+
+    return ((xdeltaA / machine.buttonA.x) * 3) + (xdeltaB / machine.buttonB.x)
+}
 
 fun main() {
     val day = "13"
@@ -65,8 +110,10 @@ fun main() {
         return result
     }
 
-    fun part2(input: List<String>): Int {
-        return input.size
+    fun part2(input: List<String>, extra: Long = 0): Long {
+        val machines = parseInput(input)
+        val result = machines.sumOf { cheapestPrice2(it, extra) }
+        return result
     }
 
     // Or read a large test input from the `src/Day01_test.txt` file:
@@ -78,6 +125,7 @@ fun main() {
     part1(input).println()
 
 
-    check(part2(testInput) == 31)
-    part2(input).println()
+    check(part2(testInput, 0L) == 480L)
+    check(part2(input, 0L) == 35574L) // NB this is my answer for part 1, change to your own
+    part2(input, 10000000000000L).println()
 }
