@@ -57,7 +57,6 @@ private fun doMoves(warehouse: Warehouse) {
         val direction = directions(move)
 
         // check if move can happen (look for empty square before wall)
-        var content = warehouse.map.at(robotPos)
         var currentPos = robotPos
         while(true) {
             currentPos = currentPos.moveBy(direction)
