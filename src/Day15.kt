@@ -1,4 +1,3 @@
-
 private data class Warehouse(val map: MutableList<MutableList<Char>>, val moves: String)
 
 private fun directions(dir: Char) = when(dir) {
@@ -9,6 +8,7 @@ private fun directions(dir: Char) = when(dir) {
     else -> throw Exception("Unknown direction $dir")
 }
 
+private val upAndDownDirections = setOf(directions('^'), directions('v'))
 
 private fun parseInput(lines: List<String>): Warehouse {
     val map = mutableListOf<MutableList<Char>>()
@@ -47,44 +47,90 @@ private fun findRobot(warehouse: Warehouse): Point {
     throw Exception("404: Robot not found")
 }
 
+private fun sumBoxes(warehouse: Warehouse, boxChar: Char = 'O') = warehouse.map.indices.sumOf { y ->
+    warehouse.map[y].indices
+        .filter { warehouse.map[y][it] == boxChar }
+        .sumOf { x -> (100 * y) + x}
+}
+
+private data class ObjectMove(val from: Point, val to: Point, val value: Char)
+private class BlockedException : Exception()
+
 private fun doMoves(warehouse: Warehouse) {
-    var robotPos = findRobot(warehouse)
 
-    fun List<List<Char>>.at(p: Point) = this[p.y][p.x]
+    val seen = mutableListOf<Point>()
 
-    // This mutates the warehouse map accordingly
-    fun doMove(move: Char) {
-        val direction = directions(move)
+    fun predictObjectMove(from: Point, direction: PointVector): List<ObjectMove> {
+        if (from in seen) {
+            return emptyList()
+        }
 
-        // check if move can happen (look for empty square before wall)
-        var currentPos = robotPos
-        while(true) {
-            currentPos = currentPos.moveBy(direction)
-            if (warehouse.map.at(currentPos) == '#') {
-                return // no move possible
-            } else if (warehouse.map.at(currentPos) == '.') {
-                break // we can move
+        seen.add(from)
+
+        val to = from.moveBy(direction)
+        val fromValue = warehouse.map[from.y][from.x]
+        val toValue = warehouse.map[to.y][to.x]
+
+        if (toValue == '#') {
+            throw BlockedException() // no move possible
+        }
+
+        // if we're here, the move is possible (for now - might get blocked further down)
+        val predictedMoves = mutableListOf<ObjectMove>(ObjectMove(from, to, fromValue))
+
+        // if we're moving up or down, and this is a large box, we need to consider the other half of the box
+        if (direction in upAndDownDirections) {
+            if (fromValue == '[') {
+                val otherSide = from.moveBy(directions('>'))
+                predictedMoves.addAll(predictObjectMove(otherSide, direction))
+            } else if (fromValue == ']') {
+                val otherSide = from.moveBy(directions('<'))
+                predictedMoves.addAll(predictObjectMove(otherSide, direction))
             }
         }
 
-        var lastPos = currentPos
-        while(currentPos != robotPos) {
-            currentPos = currentPos.moveBackBy(direction)
-            warehouse.map[lastPos.y][lastPos.x] = warehouse.map[currentPos.y][currentPos.x]
-            lastPos = currentPos
+        if (toValue != '.') {
+            predictedMoves.addAll(predictObjectMove(to, direction))
         }
 
-        warehouse.map[currentPos.y][currentPos.x] = '.'
-        robotPos = robotPos.moveBy(direction)
+        return predictedMoves
     }
 
-    warehouse.moves.forEach { doMove(it) }
+    fun executeMoves(objectMoves: List<ObjectMove>) {
+        // Do this in two passes to avoid overwriting
+        // first set all affected 'from' squares to '.'
+        objectMoves.forEach { warehouse.map[it.from.y][it.from.x] = '.' }
+        // now set 'to' to the value:
+        objectMoves.forEach { warehouse.map[it.to.y][it.to.x] = it.value }
+    }
+
+    var robotPos = findRobot(warehouse)
+    warehouse.moves.forEach {
+        seen.clear()
+        val direction = directions(it)
+        try {
+            val predictedMoves = predictObjectMove(robotPos, direction)
+            executeMoves(predictedMoves)
+            robotPos = robotPos.moveBy(direction)
+        } catch (e: BlockedException) {
+            // continue the loop without moving
+        }
+    }
 }
 
-private fun sumBoxes(warehouse: Warehouse) = warehouse.map.indices.sumOf { y ->
-    warehouse.map[y].indices
-        .filter { warehouse.map[y][it] == 'O' }
-        .sumOf { x -> (100 * y) + x}
+private fun expandWarehouse(oldHouse: Warehouse): Warehouse {
+    return Warehouse(
+        oldHouse.map.map { row ->
+            row.flatMap {
+                when (it) {
+                    '@' -> listOf('@', '.')
+                    'O' -> listOf('[', ']')
+                    else -> listOf(it, it)
+                }
+            }.toMutableList()
+        }.toMutableList(),
+        oldHouse.moves
+    )
 }
 
 fun main() {
@@ -98,7 +144,10 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        return input.size
+        val warehouse = expandWarehouse(parseInput(input))
+        doMoves(warehouse)
+        val sum = sumBoxes(warehouse, '[')
+        return sum
     }
 
     // Or read a large test input from the `src/Day01_test.txt` file:
@@ -112,6 +161,6 @@ fun main() {
     part1(input).println()
 
 
-    check(part2(testInput) == 31)
+    check(part2(testInput2) == 9021)
     part2(input).println()
 }
