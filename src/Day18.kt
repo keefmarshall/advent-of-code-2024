@@ -66,7 +66,7 @@ fun main() {
         for (i in byteCoords.indices) {
             val memory = initialiseMemorySpace(width, height, byteCoords.take(i + 1))
             try {
-                val result = findMinPath(memory)
+                findMinPath(memory)
             } catch (e: Exception) {
                 return byteCoords[i]
             }
