@@ -1,5 +1,3 @@
-import kotlin.math.sign
-
 private val directions = listOf(
     PointVector(0, -1),
     PointVector(1, 0),
@@ -54,7 +52,7 @@ private fun findMinPath(memory: List<String>): Int {
 }
 
 fun main() {
-    val day = "16"
+    val day = "18"
 
     fun part1(input: List<String>, width: Int, height: Int, max: Int): Int {
         val byteCoords = parseInput(input)
