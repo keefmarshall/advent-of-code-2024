@@ -61,8 +61,18 @@ fun main() {
         return result
     }
 
-    fun part2(input: List<String>): Int {
-        return input.size
+    fun part2(input: List<String>, width: Int, height: Int): Point {
+        val byteCoords = parseInput(input)
+        for (i in byteCoords.indices) {
+            val memory = initialiseMemorySpace(width, height, byteCoords.take(i + 1))
+            try {
+                val result = findMinPath(memory)
+            } catch (e: Exception) {
+                return byteCoords[i]
+            }
+        }
+
+        throw Exception("didn't find result")
     }
 
     // Or read a large test input from the `src/Day01_test.txt` file:
@@ -74,6 +84,6 @@ fun main() {
     part1(input, 70, 70, 1024).println()
 
 
-    check(part2(testInput) == 31)
-    part2(input).println()
+    check(part2(testInput, 6, 6) == Point(6,1))
+    part2(input, 70, 70).println()
 }
