@@ -1,19 +1,4 @@
 
-private enum class Direction(val move: PointVector) {
-    UP(PointVector(0, -1)),
-    RIGHT(PointVector(1, 0)),
-    DOWN(PointVector(0, 1)),
-    LEFT(PointVector(-1, 0))
-}
-
-private fun turnRight(dir: Direction): Direction =
-    when(dir) {
-        Direction.UP -> Direction.RIGHT
-        Direction.RIGHT -> Direction.DOWN
-        Direction.DOWN -> Direction.LEFT
-        Direction.LEFT -> Direction.UP
-    }
-
 private fun findStartPos(grid: List<String>): Point {
     for (y in grid.indices) {
         val x = grid[y].indexOf('^')

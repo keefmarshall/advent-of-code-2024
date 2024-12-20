@@ -42,6 +42,30 @@ internal fun List<String>.at(p: Point) = this[p.y][p.x]
 internal fun vectorBetween(p1: Point, p2: Point) = PointVector(p2.x - p1.x, p2.y - p1.y)
 
 
+internal enum class Direction(val move: PointVector) {
+    UP(PointVector(0, -1)),
+    RIGHT(PointVector(1, 0)),
+    DOWN(PointVector(0, 1)),
+    LEFT(PointVector(-1, 0))
+}
+
+internal fun turnLeft(dir: Direction): Direction =
+    when(dir) {
+        Direction.UP -> Direction.LEFT
+        Direction.RIGHT -> Direction.UP
+        Direction.DOWN -> Direction.RIGHT
+        Direction.LEFT -> Direction.DOWN
+    }
+
+internal fun turnRight(dir: Direction): Direction =
+    when(dir) {
+        Direction.UP -> Direction.RIGHT
+        Direction.RIGHT -> Direction.DOWN
+        Direction.DOWN -> Direction.LEFT
+        Direction.LEFT -> Direction.UP
+    }
+
+
 internal fun Int.isEven() = this % 2 == 0
 internal fun Long.isEven() = this % 2 == 0L
 internal fun BigInteger.isEven() = this % BigInteger.valueOf(2) == BigInteger.valueOf(0)
